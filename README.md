@@ -4,7 +4,7 @@
 
 KyuWeb is a proposal for a document-oriented web. It describes using existing technologies in a simplified manner for the purpose of creating a network of primarily text-based documents, interlinked hypertextually in a manner similar to the earliest forms of the World Wide Web. The KyuWeb can be effectively browsed by standard modern web browsers, but by using web technologies in a limited and/or simplified manner, it can also be browsed by dedicated KyuWeb browsers which can be much less resource-intensive than modern browsers have become, and browsing the web effectively on memory-limited 8-bit home computers of the late-'70s and early-'80s should be possible.
 
-KyuWeb uses HTTP/1.1 as a transport mechanism, with some additional HTTP headers, and primarily CommonMark (a strictly-defined successor to Markdown) for document markup.
+KyuWeb uses HTTP/1.1 as a transport mechanism (with some additional non-mandatory HTTP headers and minor changes in behavior), and primarily CommonMark (a strictly-defined successor to Markdown) for document markup.
 
 ### Why not use the standard Web?
 
@@ -20,21 +20,46 @@ KyuWeb can be thought of as a successor to the concept of Gopher. However, Gophe
 
 Gemini also aims to be a successor to Gopher and has had some success in following through on that promise. However, Gemini defines its own network protocols and markup standards. KyuWeb proposes leveraging existing standards, thus avoiding "reinventing wheels." One major benefit to this is that, particularly on newer operating systems, developers can largely leverage existing libraries for serving and retrieving files via HTTP and parsing documents with CommonMark. Even in the cases where a developer will have to create their own implementations for these standards due to lack of support for existing libraries for the operating system and/or hardware they are targeting, the standards KyuWeb uses have been around a very long time and are likely to be familiar to many developers already, and documentation for them is boundless.
 
+*(This document past this point is incomplete. Please forgive empty sections past this point; they will be filled out in time.)*
+
 ## HTTP/1.1 as KyuWeb knows it
 
-(incomplete)
+### Generalities
+
+KyuWeb servers *should* assume that clients may not support more complex yet optional HTTP/1.1 features such as Keep-alive connections, Ranges, etc. However, it *may* support these features if the client requests them.
+
+Similarly, KyuWeb clients *should* assume that servers may not support these complex features.
+
+### The `Accept-KyuWeb` request and `KyuWeb` response headers
+
+A dedicated KyuWeb browser *must* send a `Accept-KyuWeb` header. The value of this header will correspond to the major and minor versions of the KyuWeb standards that the browser wishes to communicate with; for example, as of the writing of this document, `Accept-KyuWeb: 0.0` (although the first actual software which implements these standards will probably use `Accept-KyuWeb: 0.1`).
+
+A KyuWeb server which is sending a response intended to be interpreted by a KyuWeb response by clients capable of handling such *must* send a `KyuWeb` response header with the version of the KyuWeb standards the response corresponds to; eg, `KyuWeb: 0.1`.
+
+If a server sees that a request includes an `Accept-KyuWeb` header, it *must* send a KyuWeb response if it is capable of doing so. If it does *not* see an `Accept-KyuWeb` header, it *may* send a standard HTTP web response.
+
+### The `Accept-Length` request header
+
+A KyuWeb browser *may* send an `Accept-Length` header the value of which is the maximum size of a file, in bytes, that it is capable of receiving. If such a header is sent, the server *must* not respond with a response with a body larger than the size specified in this header.
+
+For example, a browser which only has 2 MB of RAM to work with may wish to send an `Accept-Length: 524288` header to ensure responses are no larger than .5 MB in size, ensuring the browser has sufficient memory in which to store, parse, and process the response.
+
+If a KyuWeb browser sends an `Accept-Length` header *and* a `Range` header, the `Accept-Length` header *must* be ignored if the server is fulfilling the `Range` header request and only sending a limited range of a document. If the server is ignoring the header and sending the entire document instead, the `Accept-Length` header *must* be respected as normal.
+
+### `Content-Type` and `Accept` headers
+
+
+### Not acceptable responses
+
+If a server cannot fulfill a response *strictly* according to the `Accept` request headers, it *must* send a `406 Not Acceptable` response, in addition to whatever other format of response it is capable of (eg, a server which can send a KyuWeb response, but not one corresponding to the requested KyuWeb version, *should* send a KyuWeb response in whatever version it is capable of doing so). The contents and format of the body of the response is undefined, but a plain text or Markdown response that can be shown by a KyuWeb browser is recommended.
 
 ## CommonMark as KyuWeb knows it
 
-(incomplete)
+### HTML-wrapped CommonMark documents
 
 ## KyuWeb browser behavior
 
-(incomplete)
-
-## KyuWeb and standard modern web browsers
-
-(incomplete)
+## KyuWeb and standard web browsers
 
 ## Appendix
 
