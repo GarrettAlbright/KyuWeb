@@ -44,6 +44,10 @@ For example, a browser which only has 2 MB of RAM to work with may wish to send 
 
 If a KyuWeb browser sends an `Accept-Length` header *and* a `Range` header, the `Accept-Length` header *must* be ignored if the server is fulfilling the `Range` header request and only sending a limited range of a document. If the server is ignoring the header and sending the entire document instead, the `Accept-Length` header *must* be respected as normal.
 
+### The `Title` response header
+
+A server *should* provide a document title by way of the `Title` response header. A client *may* use this title in a manner similar to the `<title>` tag in HTML, such as placing it in the title bar of windows; using it to identify the document in bookmark and history lists; etc.
+
 ### Content types
 
 All KyuWeb responses *must* have a Content-Type header.
@@ -73,3 +77,9 @@ The name "DocWeb" was initially going to be used for this proposal, but was aban
 ### History
 
 I first started fleshing out the ideas for KyuWeb in a conversation on the #lua channel on the Libera IRC network on the 10th of February, 2022. I thank the other people in that channel for entertaining my rambling and giving me their ideas and criticism to consider.
+
+### On metadata (YAML sucks)
+
+Recently, some systems have developed and adapted the "front matter" file format which consists of a Markdown/CommonMark document prepended by metadata in [YAML](https://yaml.org) format. While there is some need for metadata to go along with Markdown documents as KyuWeb describes, front matter is not an appropriate format for this purpose. YAML is a [very poor choice](https://noyaml.com) for the purpose of serializing data due to, among other things, its ambiguities and, more relevant to our case, its complexity.
+
+In the current specification, such as it is, any metadata is implemented via HTTP headers, such as the Title header mentioned above. I find this satisfactory for now. However, if I manage to be convinced that in-document metadata is necessary in the future, I propose "headers" are in the same format as HTML headers at the beginning of the document, with two line breaks separating the block of headers from the body of the document. This format will allow headers to be parsed with the same code that is used to parse the HTTP headers.
