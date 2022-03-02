@@ -2,7 +2,7 @@
 
 ## Introduction
 
-KyuWeb is a proposal for a document-oriented web. It describes using existing technologies in a simplified manner for the purpose of creating a network of primarily text-based documents, interlinked hypertextually in a manner similar to the earliest forms of the World Wide Web. The KyuWeb can be effectively browsed by standard modern web browsers, but by using web technologies in a limited and/or simplified manner, it can also be browsed by dedicated KyuWeb browsers which can be much less resource-intensive than modern browsers have become, and browsing the web effectively on memory-limited 8-bit home computers of the late-'70s and early-'80s should be possible.
+KyuWeb is a proposal for a document-oriented web. It describes using existing technologies in a simplified manner for the purpose of creating a network of primarily text-based documents, interlinked hypertextually in a manner similar to the earliest forms of the World Wide Web. The KyuWeb can be effectively browsed by standard modern web browsers, but by using web technologies in a limited and/or simplified manner, it can also be browsed by dedicated KyuWeb browsers which can be much less resource-intensive than modern browsers have become, and browsing the KyuWeb effectively on memory-limited 8-bit home computers of the late-'70s and early-'80s should be possible.
 
 KyuWeb uses HTTP/1.1 as a transport mechanism (with some additional non-mandatory HTTP headers and minor changes in behavior), and primarily CommonMark (a strictly-defined successor to Markdown) for document markup.
 
@@ -10,13 +10,13 @@ KyuWeb uses HTTP/1.1 as a transport mechanism (with some additional non-mandator
 
 The current standards for the World Wide Web have brought features and improvements that broaden its scope well beyond the concept of sharing and displaying text documents. HTML 5 has features for playing audio and video and displaying paintable canvases and 3D graphics. HTTP/2.0 demands levels of encryption which are beyond the capabilities of older and more inexpensive hardware, and WebSockets offer levels of networked interactivity which are useless for the needs of simply displaying documents. All of these standards are far more complex to implement than the standards that KyuWeb proposes.
 
-However, things weren't always that way. The HTTP protocol prior to version 2 is quite easy to understand and implement. HTML, especially prior to XHTML and HTML 5, has traditionally been kind of loosey-goosey in how things work; later versions became more explicit on how things should work but also added so many new features that it became quite complex; HTML 5 standardizes well over 100 tags. While using a strict subset of these would be a good option, HTML's basic syntax is still somewhat complex and not fun to write. CommonMark provides a clear and useful list of document-oriented elements which is pleasant to both write, and read - even if the client does not actually parse and render the Markdown document and just displays the raw text instead (which is a valid, albeit not recommended, behavior for a KyuWeb browser).
+However, things weren't always that way. The HTTP protocol prior to version 2 is quite easy to understand and implement. HTML, especially prior to XHTML and HTML 5, has traditionally been kind of loosey-goosey in how things work; later versions became more explicit on how things should work but also added so many new features that it became quite complex; HTML 5 standardizes well over 100 tags. While using a strict subset of HTML 5 would be a good option, HTML's basic syntax is still somewhat complex and not fun to write. CommonMark provides a clear and useful list of document-oriented elements which is pleasant to both write and read - even if the client does not actually parse and render the Markdown document and just displays the raw text instead (which is a valid, albeit not recommended, behavior for a KyuWeb browser).
 
 That CommonMark does not support video, audio, canvases, and so on is to be considered a feature, not a bug, as these complications detract from the goal of a document-oriented web.
 
 ### Why not use Gopher or Gemini?
 
-KyuWeb can be thought of as a successor to the concept of Gopher. However, Gopher's "line-oriented" markup status is limited and doesn't lend itself well to long-form documents; it lacks headings and proper inline links, bolding, or italics. In addition, the protocol is a little too simple, not allowing for the metadata in both requests and responses that HTTP headers provide.
+KyuWeb can be thought of as a successor to the concept of Gopher. However, Gopher's "line-oriented" markup status is limited and doesn't lend itself well to long-form documents; its documents lack headings and proper inline links or styling. In addition, the protocol is a little too simple, not allowing for the metadata in both requests and responses that HTTP headers provide.
 
 Gemini also aims to be a successor to Gopher and has had some success in following through on that promise. However, Gemini defines its own network protocols and markup standards. KyuWeb proposes leveraging existing standards, thus avoiding "reinventing wheels." One major benefit to this is that, particularly on newer operating systems, developers can largely leverage existing libraries for serving and retrieving files via HTTP and parsing documents with CommonMark. Even in the cases where a developer will have to create their own implementations for these standards due to lack of support for existing libraries for the operating system and/or hardware they are targeting, the standards KyuWeb uses have been around a very long time and are likely to be familiar to many developers already, and documentation for them is boundless.
 
@@ -60,9 +60,71 @@ KyuWeb browsers *may* accept a `text/html` document and attempt to find and disp
 
 If a server cannot fulfill a response *strictly* according to the `Accept` request headers, it *must* send a `406 Not Acceptable` response, in addition to whatever other format of response it is capable of (eg, a server which can send a KyuWeb response, but not one corresponding to the requested KyuWeb version, *should* send a KyuWeb response in whatever version it is capable of doing so). The contents and format of the body of the response is undefined, but a plain text or Markdown response that can be shown by a KyuWeb browser is recommended.
 
-## KyuWeb specification: Markup
+## Document markup & formatting
+
+KyuWeb documents are comprised of text marked up with Markdown according to the current  [CommonMark specification](https://spec.commonmark.org), with one exception; any HTML in the document *must not* be interpreted as HTML, but rather as plain text. KyuWeb browsers *should* parse and display these documents as close to specification as possible, but *may* display raw unparsed markup if it does not yet (or never will) support some particular Markdown/CommonMark feature.
+
+KyuWeb browsers *may* support auto-linked URLs and tables as per the [GitHub Flavored Markdown specification](https://github.github.com/gfm/).
+
+Documents *should* be written with the expectation that a browser may not be able to display images directly in documents (for example, it may be a CLI-based browser, or the user may have optionally disabled images) and/or the user may be visually impaired. Thus, all images in documents should contain helpful descriptions.
+
+When a document served by a KyuWeb server contains only markup, it *must* be served with the `text/markdown` value for the `Content-Type` header.
 
 ### HTML-wrapped Markdown documents
+
+In order to improve interoperability between KyuWeb and the standard web, it is also possible to wrap KyuWeb documents in HTML. The intent here is that the HTML page will link to a JavaScript-powered client-side Markdown interpreter to parse the KyuWeb page body with, as well as CSS files to style said page. However, KyuWeb-exclusive browsers will ignore the HTML parts of the document and only use the Markdown part of the document.
+
+A HTML-wrapped Markdown document *must* be served with a `text/html` value for the `Content-Type` header. This will indicate to the client that it should used the wrapped HTML approach for extracting the document content.
+
+To find the Markdown wrapped in an HTML document, the KyuWeb client *must* use the following rules;
+
+1. Find a line which begins with the sequence `<!-- KyuWeb Doc Start /-->`. Ignore the entire content of that line up to and including the next `CR + LF` sequence. The Markdown document begins on the next line (the byte following the `LF`).
+2. Find a line which ends with the sequence `<!-- KyuWeb Doc End /-->` followed by a `CR + LF` sequence. Ignore the entire content of that line. The Markdown document ended at the beginning of that line (the bytes up to and including the `LF` that proceeded that line.)
+
+All bytes outside of the sequence captured by the rules above are ignored. The captured bytes are then interpreted as per the rules above.
+
+What follows is an example of a HTML-wrapped Markdown document. Note that all line breaks use the `CR + LF` sequence.
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>An Example HTML-wrapped Markdown Document</title>
+    <script type="text/javascript" src="/scripts/commonmark-parser.js"></script>
+    <script type="text/javascript" src="/scripts/kyuweb-parser.js"></script>
+    <link type="text/css" href="/styles/kyuweb-styles.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1> Hello, world! A KyuWeb document starts below.</h1>
+
+<!-- KyuWeb Doc Start /--><pre id="kyuweb-doc">
+*Hello, world!* This is a KyuWeb document.
+
+Thanks for checking it out!
+</pre><!-- KyuWeb Doc End /-->
+
+    <p>Wow. That was an interesting experience, wasn't it?</p>
+  </body>
+</html>
+```
+
+The JavaScript included in the HTML document could then find the Markdown embedded in the element with the `kyubweb-doc` element and pass it through a CommonMark parser. It could then remove the `<pre>` element and replace it with the HTML that the parser has created. If the web browser does not support JavaScript, then the Markdown document source would be visible within the page and be as readable as a marked-up plain text document.
+
+To a KyuWeb browser, once the HTML parts of the document are "trimmed away" using the rules above, the document is identical to the following:
+
+```
+*Hello, world!* This is a KyuWeb document.
+
+Thanks for checking it out!
+```
+
+With this approach, a web server can easily output documents readable both by standard web browsers and KyuWeb browsers.
+
+All this being said, a server *should,* when presented with a `Accept-KyuWeb` header, respond with a `text/markdown` document whenever possible. Furthermore, If a client does not list the `text/html` type in its `Accept-Type` request header, a server *may not* respond with an HTML-wrapped Markdown document.
+
+### Text encoding
+
+As with HTTP and HTML, KyuWeb documents may be provided in any given text encoding. Thus, a server *should* provide a `charset` parameter on the `Content-Type` header, such as `text/markdown;charset=US-ASCII`), such that clients can make a best effort to display the document correctly if it is capable of doing so.
 
 ## KyuWeb and standard web browsers
 
@@ -82,4 +144,6 @@ I first started fleshing out the ideas for KyuWeb in a conversation on the #lua 
 
 Recently, some systems have developed and adapted the "front matter" file format which consists of a Markdown/CommonMark document prepended by metadata in [YAML](https://yaml.org) format. While there is some need for metadata to go along with Markdown documents as KyuWeb describes, front matter is not an appropriate format for this purpose. YAML is a [very poor choice](https://noyaml.com) for the purpose of serializing data due to, among other things, its ambiguities and, more relevant to our case, its complexity.
 
-In the current specification, such as it is, any metadata is implemented via HTTP headers, such as the Title header mentioned above. I find this satisfactory for now. However, if I manage to be convinced that in-document metadata is necessary in the future, I propose "headers" are in the same format as HTML headers at the beginning of the document, with two line breaks separating the block of headers from the body of the document. This format will allow headers to be parsed with the same code that is used to parse the HTTP headers.
+In the current specification, such as it is, any metadata is implemented via HTTP headers, such as the Title header mentioned above. I find this satisfactory for now. However, if I manage to be convinced that in-document metadata is necessary in the future, I propose "headers" are in the same format as HTML headers at the beginning of the document, with two line breaks separating the block of headers from the body of the document. Thus, at the byte level, the document would appear to have two blocks of identically-formatted headers before the body, but the first block would be consumed by the HTTP handling code, whereas the second block would be consumed by the KyuWeb parser. This format will allow headers to be parsed with the same code that is used to parse the HTTP headers.
+
+However, for the time being, I find using solely HTTP headers to be sufficient for the time being.
