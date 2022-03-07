@@ -78,12 +78,12 @@ A HTML-wrapped Markdown document *must* be served with a `text/html` value for t
 
 To find the Markdown wrapped in an HTML document, the KyuWeb client *must* use the following rules;
 
-1. Find a line which begins with the sequence `<!-- KyuWeb Doc Start /-->`. Ignore the entire content of that line up to and including the next `CR + LF` sequence. The Markdown document begins on the next line (the byte following the `LF`).
-2. Find a line which ends with the sequence `<!-- KyuWeb Doc End /-->` followed by a `CR + LF` sequence. Ignore the entire content of that line. The Markdown document ended at the beginning of that line (the bytes up to and including the `LF` that proceeded that line.)
+1. Find a line which begins with the sequence `<!-- KyuWeb Doc Start /-->`. Ignore the entire content of that line up to and including the next line ending (as defined in the [CommonMark spec](https://spec.commonmark.org/0.30/#line-ending)). The Markdown document begins on the next line (the byte following the line ending.
+2. Find a line which ends with the sequence `<!-- KyuWeb Doc End /-->` followed by a line ending. Ignore the entire content of that line. The Markdown document ended at the beginning of that line (the bytes up to and including the line ending that proceeded that line.)
 
 All bytes outside of the sequence captured by the rules above are ignored. The captured bytes are then interpreted as per the rules above.
 
-What follows is an example of a HTML-wrapped Markdown document. Note that all line breaks use the `CR + LF` sequence.
+What follows is an example of a HTML-wrapped Markdown document.
 
 ```html
 <!doctype html>
@@ -116,6 +116,7 @@ To a KyuWeb browser, once the HTML parts of the document are "trimmed away" usin
 *Hello, world!* This is a KyuWeb document.
 
 Thanks for checking it out!
+
 ```
 
 With this approach, a web server can easily output documents readable both by standard web browsers and KyuWeb browsers.
