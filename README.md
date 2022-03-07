@@ -8,9 +8,9 @@ KyuWeb uses HTTP/1.1 as a transport mechanism (with some additional non-mandator
 
 ### Why not use the standard Web?
 
-The current standards for the World Wide Web have brought features and improvements that broaden its scope well beyond the concept of sharing and displaying text documents. HTML 5 has features for playing audio and video and displaying paintable canvases and 3D graphics. HTTP/2.0 demands levels of encryption which are beyond the capabilities of older and more inexpensive hardware, and WebSockets offer levels of networked interactivity which are useless for the needs of simply displaying documents. All of these standards are far more complex to implement than the standards that KyuWeb proposes.
+The current standards for the World Wide Web have brought features and improvements that broaden its scope well beyond the concept of sharing and displaying text documents. HTML 5 has features for playing audio and video and displaying paintable canvases and 3D graphics. HTTP/2.0 demands levels of encryption which are beyond the capabilities of older and more inexpensive hardware, and WebSockets offer levels of networked interactivity which are useless for the needs of simply displaying documents. All of these standards are far more complex to implement than the standards that KyuWeb proposes. However, things weren't always that way. The HTTP protocol prior to version 2 is quite easy to understand and implement.
 
-However, things weren't always that way. The HTTP protocol prior to version 2 is quite easy to understand and implement. HTML, especially prior to XHTML and HTML 5, has traditionally been kind of loosey-goosey in how things work; later versions became more explicit on how things should work but also added so many new features that it became quite complex; HTML 5 standardizes well over 100 tags. While using a strict subset of HTML 5 would be a good option, HTML's basic syntax is still somewhat complex and not fun to write. CommonMark provides a clear and useful list of document-oriented elements which is pleasant to both write and read - even if the client does not actually parse and render the Markdown document and just displays the raw text instead (which is a valid, albeit not recommended, behavior for a KyuWeb browser).
+Then there's HTML. HTML, especially prior to XHTML and HTML 5, has traditionally been kind of loosey-goosey in how things work. Later versions became more explicit on how things should work, but also added so many new features that it became quite complex; HTML 5 standardizes well over 100 tags. While using a strict subset of HTML 5 would be a good option, HTML's basic syntax is still somewhat complex and not fun to write. CommonMark provides a clear and useful list of document-oriented elements which is pleasant to both write and read - even if the client does not actually parse and render the Markdown document and just displays the raw text instead (which is a valid, albeit not recommended, behavior for a KyuWeb browser).
 
 That CommonMark does not support video, audio, canvases, and so on is to be considered a feature, not a bug, as these complications detract from the goal of a document-oriented web.
 
@@ -19,8 +19,6 @@ That CommonMark does not support video, audio, canvases, and so on is to be cons
 KyuWeb can be thought of as a successor to the concept of Gopher. However, Gopher's "line-oriented" markup status is limited and doesn't lend itself well to long-form documents; its documents lack headings and proper inline links or styling. In addition, the protocol is a little too simple, not allowing for the metadata in both requests and responses that HTTP headers provide.
 
 Gemini also aims to be a successor to Gopher and has had some success in following through on that promise. However, Gemini defines its own network protocols and markup standards. KyuWeb proposes leveraging existing standards, thus avoiding "reinventing wheels." One major benefit to this is that, particularly on newer operating systems, developers can largely leverage existing libraries for serving and retrieving files via HTTP and parsing documents with CommonMark. Even in the cases where a developer will have to create their own implementations for these standards due to lack of support for existing libraries for the operating system and/or hardware they are targeting, the standards KyuWeb uses have been around a very long time and are likely to be familiar to many developers already, and documentation for them is boundless.
-
-*(This document past this point is incomplete. Please forgive empty sections past this point; they will be filled out in time.)*
 
 ## KyuWeb Specification: Transport
 
@@ -60,7 +58,9 @@ KyuWeb browsers *may* accept a `text/html` document and attempt to find and disp
 
 If a server cannot fulfill a response *strictly* according to the `Accept` request headers, it *must* send a `406 Not Acceptable` response, in addition to whatever other format of response it is capable of (eg, a server which can send a KyuWeb response, but not one corresponding to the requested KyuWeb version, *should* send a KyuWeb response in whatever version it is capable of doing so). The contents and format of the body of the response is undefined, but a plain text or Markdown response that can be shown by a KyuWeb browser is recommended.
 
-## Document markup & formatting
+## KyuWeb Specification: Documents
+
+### Markdown
 
 KyuWeb documents are comprised of text marked up with Markdown according to the current  [CommonMark specification](https://spec.commonmark.org), with one exception; any HTML in the document *must not* be interpreted as HTML, but rather as plain text. KyuWeb browsers *should* parse and display these documents as close to specification as possible, but *may* display raw unparsed markup if it does not yet (or never will) support some particular Markdown/CommonMark feature.
 
