@@ -2,7 +2,7 @@
 
 ## Introduction
 
-KyuWeb is a proposal for a document-oriented web. It describes using existing technologies in a simplified manner for the purpose of creating a network of primarily text-based documents, interlinked hypertextually in a manner similar to the earliest forms of the World Wide Web. The KyuWeb can be effectively browsed by standard modern web browsers, but by using web technologies in a limited and/or simplified manner, it can also be browsed by dedicated KyuWeb browsers which can be much less resource-intensive than modern browsers have become, and browsing the KyuWeb effectively on memory-limited 8-bit home computers of the late-'70s and early-'80s should be possible.
+KyuWeb is a proposal for a document-oriented web. It describes using existing technologies in a simplified manner for the purpose of creating a network of primarily text-based documents, interlinked hypertextually in a manner similar to the earliest forms of the World Wide Web. The KyuWeb can be effectively browsed by standard modern web browsers, but by using web technologies in a limited and/or simplified manner, it can also be browsed by dedicated KyuWeb browsers which can be much less resource-intensive than modern browsers have become, and browsing the KyuWeb effectively on systems as resource-limited as the early 16-bit home computers of the late 1980s should be possible.
 
 KyuWeb uses HTTP/1.1 as a transport mechanism (with some additional non-mandatory HTTP headers and minor changes in behavior), and primarily CommonMark (a strictly-defined successor to Markdown) for document markup.
 
