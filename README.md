@@ -14,7 +14,7 @@ Then there's HTML. HTML, especially prior to XHTML and HTML 5, has traditionally
 
 That CommonMark does not support video, audio, canvases, and so on is to be considered a feature, not a bug, as these complications detract from the goal of a document-oriented web.
 
-### Why not use Gopher or Gemini?
+### Why not use [Gopher](https://datatracker.ietf.org/doc/html/rfc1436) or [Gemini](https://gemini.circumlunar.space/docs/faq.gmi)?
 
 KyuWeb can be thought of as a successor to the concept of Gopher. However, Gopher's "line-oriented" markup status is limited and doesn't lend itself well to long-form documents; its documents lack headings and proper inline links or styling. In addition, the protocol is a little too simple, not allowing for the metadata in both requests and responses that HTTP headers provide.
 
@@ -24,7 +24,7 @@ Gemini also aims to be a successor to Gopher and has had some success in followi
 
 ### Basics
 
-KyuWeb uses HTTP/1.1 for communication between clients and servers. KyuWeb browsers make HTTP requests to servers, which respond with HTTP responses. With the exception of the custom headers below, the questions of "Does KyuWeb support X?" or "How does KyuWeb support Y?" in terms of data transport are answered with "Refer to the HTTP/1.1 spec."
+KyuWeb uses HTTP/1.1 for communication between clients and servers. KyuWeb browsers make HTTP requests to servers, which respond with HTTP responses. With the exception of the custom headers below, the questions of "Does KyuWeb support X?" or "How does KyuWeb support Y?" in terms of data transport are answered with "Refer to the [HTTP/1.1 spec](https://datatracker.ietf.org/doc/html/rfc7230)."
 
 ### The `Accept-KyuWeb` request and `KyuWeb` response headers
 
