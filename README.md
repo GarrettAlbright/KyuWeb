@@ -1,4 +1,4 @@
-# KyuWeb v0.0.1 Alpha 1 (incomplete)
+# KyuWeb v0.0.1 Alpha 2-ish (incomplete)
 
 ## Introduction
 
@@ -127,7 +127,15 @@ All this being said, a server *should,* when presented with a `Accept-KyuWeb` he
 
 As with HTTP and HTML, KyuWeb documents may be provided in any given text encoding. Thus, a server *should* provide a `charset` parameter on the `Content-Type` header, such as `text/markdown;charset=US-ASCII`), such that clients can make a best effort to display the document correctly if it is capable of doing so.
 
-## KyuWeb and standard web browsers
+## Existing Implementations and Software
+
+### Servers
+
+- [KyuWebServe](https://github.com/PeaceMedia/KyuWebServe) (PHP), by the author of this document
+
+### Browsers
+
+- *Coming soon… hopefully…*
 
 ## Appendix
 
